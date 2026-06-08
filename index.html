@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CravaCopa - Bolão Copa do Mundo 2026</title>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Core CSS -->
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- 2. Cabeçalho Global (Header) -->
+    <header class="header-global">
+      <div class="header-inner">
+        <!-- Logo -->
+        <a href="#" class="logo" onclick="navigateTo('home')">
+          <i class="fa-solid fa-trophy"></i>
+          <span>CRAVA<span class="copa">COPA</span></span>
+        </a>
+        
+        <!-- Navegação (Centro) -->
+        <nav>
+          <ul class="nav-links">
+            <li id="nav-home" class="active"><a href="#" onclick="navigateTo('home')"><i class="fa-solid fa-house mobile-only"></i><span>Início</span></a></li>
+            <li id="nav-boloes"><a href="#" onclick="navigateTo('boloes')"><i class="fa-solid fa-users mobile-only"></i><span>Bolões</span></a></li>
+            <li id="nav-jogos"><a href="#" onclick="navigateTo('jogos')"><i class="fa-solid fa-circle-play mobile-only"></i><span>Jogos</span></a></li>
+            <li id="nav-ranking"><a href="#" onclick="navigateTo('detalhes')"><i class="fa-solid fa-ranking-star mobile-only"></i><span>Ranking</span></a></li>
+            <li id="nav-resenha"><a href="#" onclick="navigateTo('resenha')"><i class="fa-solid fa-comments mobile-only"></i><span>Resenha</span></a></li>
+            <li id="nav-premios"><a href="#" onclick="navigateTo('premios')"><i class="fa-solid fa-award mobile-only"></i><span>Prêmios</span></a></li>
+            <li id="nav-comofunciona"><a href="#" onclick="navigateTo('comofunciona')"><i class="fa-solid fa-circle-question mobile-only"></i><span>Como Funciona</span></a></li>
+          </ul>
+        </nav>
+        
+        <!-- Usuário (Direita) -->
+        <div class="header-user-section">
+          <div class="notification-bell" onclick="toggleNotifications()">
+            <i class="fa-regular fa-bell"></i>
+            <span class="bell-badge"></span>
+          </div>
+          
+          <div class="user-profile-menu" onclick="toggleUserMenu()">
+            <img class="user-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80" alt="Avatar Usuário">
+            <span class="user-name">O Vidente</span>
+            <i class="fa-solid fa-chevron-down dropdown-arrow"></i>
+          </div>
+          
+          <!-- Dropdown Menu -->
+          <div class="user-dropdown" id="userDropdown">
+            <div class="dropdown-item" onclick="navigateTo('detalhes')">
+              <i class="fa-solid fa-user"></i> Meu Perfil
+            </div>
+            <div class="dropdown-item" onclick="showToast('Configurações salvas!', 'success')">
+              <i class="fa-solid fa-gear"></i> Configurações
+            </div>
+            <div class="dropdown-item text-red" onclick="showToast('Sessão encerrada', 'warning')">
+              <i class="fa-solid fa-right-from-bracket"></i> Sair
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main>
+      
+      <!-- ==============================================
+           3. TELA PRINCIPAL (DASHBOARD / HOME)
+           ============================================== -->
+      <section id="page-home" class="page active">
+        <div class="dashboard-grid">
+          
+          <!-- Banner Principal (Hero Section) & Next Match Card -->
+          <div class="hero-banner">
+            <div class="hero-content">
+              <h1 class="hero-title">A COPA É NOSSA.<br>A RESENHA TAMBÉM!</h1>
+              <p class="hero-subtitle">Monte seu bolão, chame os amigos e crave seus palpites na Copa do Mundo 2026!</p>
+              <div class="hero-actions">
+                <button class="btn btn-primary" onclick="openCreatePoolModal()">Criar Meu Bolão</button>
+                <button class="btn btn-outline" onclick="navigateTo('boloes')"><i class="fa-solid fa-arrow-right-to-bracket"></i> Entrar em um Bolão</button>
+              </div>
+              
+              <!-- Tags Informativas -->
+              <div class="hero-tags">
+                <div class="tag-item"><i class="fa-solid fa-circle-check"></i> 100% GRÁTIS</div>
+                <div class="tag-item"><i class="fa-solid fa-circle-check"></i> SEM APOSTAS</div>
+                <div class="tag-item"><i class="fa-solid fa-circle-check"></i> SÓ RESENHA</div>
+                <div class="tag-item"><i class="fa-solid fa-circle-check"></i> RANKING EM TEMPO REAL</div>
+              </div>
+            </div>
+
+            <!-- Card Flutuante: PRÓXIMO JOGO -->
+            <div class="next-match-card-wrapper">
+              <div class="next-match-card">
+                <div class="next-match-title">Próximo Jogo</div>
+                
+                <div class="match-teams-vs">
+                  <div class="team-flag-col">
+                    <span class="flag-icon" style="font-size: 2rem;">🇺🇸</span>
+                    <span>EUA</span>
+                  </div>
+                  <span class="vs-divider">X</span>
+                  <div class="team-flag-col">
+                    <span class="flag-icon" style="font-size: 2rem;">🇨🇦</span>
+                    <span>CANADÁ</span>
+                  </div>
+                </div>
+
+                <div class="match-details-meta">
+                  12/06 - 20:00 • MetLife Stadium
+                </div>
+
+                <!-- Cronômetro de Contagem Regressiva -->
+                <div class="countdown-timer" id="countdownTimer">
+                  <div class="timer-block">
+                    <span class="timer-number" id="timer-days">02</span>
+                    <span class="timer-label">Dias</span>
+                  </div>
+                  <div class="timer-block">
+                    <span class="timer-number" id="timer-hours">10</span>
+                    <span class="timer-label">Horas</span>
+                  </div>
+                  <div class="timer-block">
+                    <span class="timer-number" id="timer-mins">18</span>
+                    <span class="timer-label">Min</span>
+                  </div>
+                  <div class="timer-block">
+                    <span class="timer-number" id="timer-secs">45</span>
+                    <span class="timer-label">Seg</span>
+                  </div>
+                </div>
+
+                <button class="btn btn-outline btn-sm" onclick="navigateTo('jogos')">Ver todos os jogos</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Seção Esquerda: MEUS BOLÕES -->
+          <div class="dashboard-left-col">
+            <div class="section-header">
+              <h2 class="section-title">Meus Bolões</h2>
+              <a href="#" class="section-link" onclick="navigateTo('boloes')">Ver todos</a>
+            </div>
+            
+            <div class="pools-horizontal-row" id="myPoolsRow">
+              <!-- Dynamically populated -->
+            </div>
+            
+            <!-- Seção DESTAQUES DA RODADA (Ranking rápido) -->
+            <div class="section-header">
+              <h2 class="section-title">Destaques da Rodada</h2>
+            </div>
+            
+            <div class="top-ranking-row" id="dashboardRanking">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <!-- Seção Direita: MODO ZICA -->
+          <div class="dashboard-right-col">
+            <div class="zica-promo-card">
+              <div class="zica-card-header">
+                <div class="zica-icon-container">
+                  <i class="fa-solid fa-bolt"></i>
+                </div>
+                <h3 class="zica-card-title">Modo Zica</h3>
+              </div>
+              <p class="zica-card-desc">Detone o palpite de um amigo e ganhe ainda mais vantagem na pontuação geral!</p>
+              <button class="btn btn-gold" onclick="openZicaModal()"><i class="fa-solid fa-shield-halved"></i> Usar Zica</button>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ==============================================
+           4. TELA DE BOLÕES (POOLS LIST)
+           ============================================== -->
+      <section id="page-boloes" class="page">
+        <div class="pools-header-row">
+          <div class="pools-header-inner">
+            <h1 class="pools-page-title">Bolões</h1>
+            <p class="text-muted">Participe ou crie seu bolão e chame a galera!</p>
+          </div>
+          <button class="btn btn-outline-green" onclick="openCreatePoolModal()"><i class="fa-solid fa-plus"></i> Criar Novo Bolão</button>
+        </div>
+
+        <!-- Abas -->
+        <div class="pools-tabs-container">
+          <div class="tab-pill active" id="tab-my-pools" onclick="switchPoolTab('my')">Meus Bolões</div>
+          <div class="tab-pill" id="tab-all-pools" onclick="switchPoolTab('all')">Todos os Bolões</div>
+        </div>
+
+        <!-- Grade de Cards de Bolões -->
+        <div class="pools-grid" id="poolsGrid">
+          <!-- Dynamically populated -->
+        </div>
+      </section>
+
+      <!-- ==============================================
+           5. TELA DE DETALHES DO BOLÃO (EX: RESENHA FC)
+           ============================================== -->
+      <section id="page-detalhes" class="page">
+        <!-- Cabeçalho Interno do Bolão -->
+        <div class="pool-detail-header-panel">
+          <div class="pool-detail-header-info">
+            <div class="pool-detail-shield" id="detailPoolShield">
+              <i class="fa-solid fa-shield"></i>
+            </div>
+            <div class="pool-detail-title-col">
+              <h1 class="pool-detail-name" id="detailPoolName">Resenha FC</h1>
+              <p class="text-muted" id="detailPoolSubtext">Código de convite: <span class="text-green" style="font-family: monospace; font-weight: bold; cursor: pointer;" onclick="copyInviteCode()">#RESENHA26 <i class="fa-regular fa-copy"></i></span></p>
+            </div>
+          </div>
+          
+          <div class="pool-detail-actions">
+            <button class="btn btn-outline btn-sm" onclick="copyInviteCode()"><i class="fa-solid fa-share-nodes"></i> Compartilhar convite</button>
+            <button class="btn btn-outline btn-sm" style="min-width: 42px;" onclick="showToast('Menu de opções', 'success')"><i class="fa-solid fa-ellipsis"></i></button>
+          </div>
+        </div>
+
+        <!-- Sub-abas -->
+        <div class="pool-detail-subtabs">
+          <div class="subtab-item active" onclick="switchDetailSubtab('ranking')">Ranking</div>
+          <div class="subtab-item" onclick="navigateTo('jogos')">Jogos</div>
+          <div class="subtab-item" onclick="navigateTo('resenha')">Resenha</div>
+          <div class="subtab-item" onclick="switchDetailSubtab('participantes')">Participantes</div>
+          <div class="subtab-item" onclick="switchDetailSubtab('configuracoes')">Configurações</div>
+        </div>
+
+        <!-- Conteúdo Interno Split -->
+        <div class="pool-details-grid">
+          
+          <!-- Tabela RANKING DO BOLÃO -->
+          <div class="pool-ranking-panel">
+            <h3 class="ranking-table-title">Ranking do Bolão</h3>
+            <table class="ranking-table">
+              <thead>
+                <tr>
+                  <th class="table-pos">Pos.</th>
+                  <th>Participante</th>
+                  <th>Pontos</th>
+                  <th>Zicas</th>
+                </tr>
+              </thead>
+              <tbody id="detailRankingBody">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Widgets Sidebar (Infos e Top Zicas) -->
+          <div class="pool-sidebar-widgets">
+            <!-- Info do Bolão -->
+            <div class="sidebar-widget">
+              <h4 class="widget-title">Info do Bolão</h4>
+              <div class="info-list">
+                <div class="info-row">
+                  <span class="info-label">Criado por:</span>
+                  <span class="info-val" id="detailPoolCreator">O Vidente</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Criado em:</span>
+                  <span class="info-val" id="detailPoolDate">01/05/2026</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Participantes:</span>
+                  <span class="info-val" id="detailPoolMembersCount">27</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Tipo:</span>
+                  <span class="info-val">Público</span>
+                </div>
+              </div>
+              <button class="btn btn-outline text-red btn-sm" onclick="confirmLeavePool()"><i class="fa-solid fa-right-from-bracket"></i> Sair do Bolão</button>
+            </div>
+
+            <!-- Top Zicas -->
+            <div class="sidebar-widget">
+              <h4 class="widget-title">Top Zicas</h4>
+              <div class="top-zicas-list" id="detailTopZicas">
+                <!-- Dynamically populated -->
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ==============================================
+           6. TELA DE JOGOS (MATCHES LIST)
+           ============================================== -->
+      <section id="page-jogos" class="page">
+        <div class="matches-header">
+          <h1 class="matches-page-title">Jogos</h1>
+          <p class="text-muted">Faça seus palpites e acompanhe os resultados em tempo real</p>
+        </div>
+
+        <!-- Filtros (Pílulas) -->
+        <div class="matches-filter-row">
+          <div class="filter-pill active" onclick="filterMatches('todos')">Todos</div>
+          <div class="filter-pill" onclick="filterMatches('grupo')">Fase de Grupos</div>
+          <div class="filter-pill" onclick="filterMatches('oitavas')">Oitavas</div>
+          <div class="filter-pill" onclick="filterMatches('quartas')">Quartas</div>
+          <div class="filter-pill" onclick="filterMatches('semi')">Semi</div>
+          <div class="filter-pill" onclick="filterMatches('final')">Final</div>
+        </div>
+
+        <!-- Lista de Partidas -->
+        <div class="matches-list" id="matchesList">
+          <!-- Dynamically populated -->
+        </div>
+      </section>
+
+      <!-- ==============================================
+           8. TELA DE RESENHA (CHAT)
+           ============================================== -->
+      <section id="page-resenha" class="page">
+        <div class="chat-container">
+          <div class="chat-header">
+            <h2 class="chat-title">Resenha</h2>
+            <p class="chat-subtitle">Papo reto e zoeira liberada entre os participantes!</p>
+          </div>
+          
+          <!-- Mensagens list -->
+          <div class="chat-feed" id="chatFeed">
+            <!-- Dynamically populated -->
+          </div>
+
+          <!-- Input bar -->
+          <form class="chat-input-bar" id="chatForm" onsubmit="sendChatMessage(event)">
+            <input type="text" class="chat-input-field" id="chatInput" placeholder="Escreva uma mensagem..." autocomplete="off">
+            <button type="submit" class="chat-send-btn">
+              <i class="fa-solid fa-paper-plane"></i>
+            </button>
+          </form>
+        </div>
+      </section>
+
+      <!-- ==============================================
+           9. TELA DE PRÊMIOS (AWARDS)
+           ============================================== -->
+      <section id="page-premios" class="page">
+        <div class="prizes-page-header">
+          <h1 class="prizes-title">Prêmios</h1>
+          <p class="prizes-subtitle">Os melhores colocados levam a resenha (e a glória)!</p>
+        </div>
+
+        <!-- Visual de Pódio -->
+        <div class="podium-scene-container">
+          
+          <div class="podium-structure">
+            
+            <!-- 2º LUGAR (Esquerda) -->
+            <div class="podium-col podium-col-second">
+              <div class="podium-card-float">
+                <span class="podium-place-label">2º Lugar</span>
+                <span class="podium-prize-value">R$ 6.000</span>
+                <span class="podium-trophy-type"><i class="fa-solid fa-award text-muted"></i> troféu virtual</span>
+              </div>
+              <div class="podium-block-3d">2</div>
+            </div>
+
+            <!-- 1º LUGAR (Centro, maior, destaque) -->
+            <div class="podium-col podium-col-first">
+              <div class="podium-card-float">
+                <!-- Golden Trophy Generated Image -->
+                <img class="trophy-podium-img" src="assets/trophy.png" alt="Taça de Ouro">
+                <span class="podium-place-label">1º Lugar</span>
+                <span class="podium-prize-value">R$ 10.000</span>
+                <span class="podium-trophy-type"><i class="fa-solid fa-trophy text-gold"></i> troféu de ouro</span>
+              </div>
+              <div class="podium-block-3d">1</div>
+            </div>
+
+            <!-- 3º LUGAR (Direita) -->
+            <div class="podium-col podium-col-third">
+              <div class="podium-card-float">
+                <span class="podium-place-label">3º Lugar</span>
+                <span class="podium-prize-value">R$ 3.000</span>
+                <span class="podium-trophy-type"><i class="fa-solid fa-award text-gold"></i> troféu virtual</span>
+              </div>
+              <div class="podium-block-3d">3</div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- Rodapé da Premiação -->
+        <p class="prizes-footer-text">4º ao 10º lugar - R$ 600 cada</p>
+      </section>
+
+      <!-- COMO FUNCIONA PAGE -->
+      <section id="page-comofunciona" class="page">
+        <div style="background-color: var(--bg-card); border: 1.5px solid var(--color-border); border-radius: var(--border-radius-lg); padding: 32px; max-width: 700px; margin: 0 auto;">
+          <h1 style="font-family: var(--font-display); font-size: 1.75rem; margin-bottom: 20px;">Como Funciona o CravaCopa</h1>
+          <p style="color: var(--text-muted-light); line-height: 1.6; margin-bottom: 20px;">
+            O CravaCopa é um bolão gratuito e divertido para acompanhar a Copa do Mundo 2026. Veja abaixo as regras básicas de pontuação:
+          </p>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: 14px; color: var(--text-muted-light);">
+            <li style="display: flex; gap: 10px; align-items: flex-start;">
+              <i class="fa-solid fa-check text-green" style="margin-top: 4px;"></i>
+              <div><strong>Cravada Exata (25 pts):</strong> Você acerta o placar exato da partida (Ex: palpita 2x1 e o jogo termina 2x1).</div>
+            </li>
+            <li style="display: flex; gap: 10px; align-items: flex-start;">
+              <i class="fa-solid fa-check text-green" style="margin-top: 4px;"></i>
+              <div><strong>Vencedor & Saldo de Gols (18 pts):</strong> Você acerta quem venceu e a diferença de gols, mas erra o número de gols (Ex: palpita 3x1 e o jogo termina 2x0).</div>
+            </li>
+            <li style="display: flex; gap: 10px; align-items: flex-start;">
+              <i class="fa-solid fa-check text-green" style="margin-top: 4px;"></i>
+              <div><strong>Apenas Tendência (10 pts):</strong> Você acerta apenas o vencedor ou empate, mas erra o placar e a diferença (Ex: palpita 1x0 e o jogo termina 3x1).</div>
+            </li>
+            <li style="display: flex; gap: 10px; align-items: flex-start;">
+              <i class="fa-solid fa-bolt text-gold" style="margin-top: 4px;"></i>
+              <div><strong>Modo Zica (+10 ou -5 pts):</strong> Use o Modo Zica em um palpite de um amigo. Se o seu amigo errar feio, você ganha 10 pontos extras. Mas se ele cravar o jogo, você perde 5 pontos!</div>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+    </main>
+
+  </div>
+
+  <!-- ==============================================
+       MODALS & OVERLAYS
+       ============================================== -->
+       
+  <!-- 7. TELA DE PALPITE DE JOGO (MODAL) -->
+  <div class="modal-overlay" id="guessModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="back-btn" onclick="closeGuessModal()">
+          <i class="fa-solid fa-arrow-left"></i> Voltar
+        </button>
+        <h3 class="modal-title">Palpite de Jogo</h3>
+      </div>
+
+      <!-- Confronto Info banner -->
+      <div class="guess-confrontation-banner">
+        <span class="guess-banner-meta" id="guessModalMeta">12/06 - 20:00 • MetLife Stadium</span>
+        <div class="guess-teams-row">
+          <div class="guess-team">
+            <span id="guessModalHomeFlag" style="font-size: 2.2rem; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));">🇺🇸</span>
+            <span class="guess-team-name" id="guessModalHomeName">EUA</span>
+          </div>
+          <span class="guess-vs-text">X</span>
+          <div class="guess-team">
+            <span id="guessModalAwayFlag" style="font-size: 2.2rem; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));">🇨🇦</span>
+            <span class="guess-team-name" id="guessModalAwayName">CANADÁ</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Placar Controls -->
+      <h4 class="guess-subtitle">Seu Palpite</h4>
+      <div class="guess-score-controller">
+        <!-- Home team control -->
+        <div class="score-control-block">
+          <button class="score-btn" onclick="adjustScore('home', -1)">-</button>
+          <span class="score-value" id="guessHomeScore">0</span>
+          <button class="score-btn" onclick="adjustScore('home', 1)">+</button>
+        </div>
+        
+        <span class="score-divider-x">X</span>
+        
+        <!-- Away team control -->
+        <div class="score-control-block">
+          <button class="score-btn" onclick="adjustScore('away', -1)">-</button>
+          <span class="score-value" id="guessAwayScore">0</span>
+          <button class="score-btn" onclick="adjustScore('away', 1)">+</button>
+        </div>
+      </div>
+
+      <!-- Seleção Rápida -->
+      <h4 class="guess-subtitle">Resultado do Jogo</h4>
+      <div class="quick-outcome-selection">
+        <button class="outcome-btn" id="outcome-win-home" onclick="setQuickOutcome('win-home')">Vitória EUA</button>
+        <button class="outcome-btn" id="outcome-draw" onclick="setQuickOutcome('draw')">Empate</button>
+        <button class="outcome-btn" id="outcome-win-away" onclick="setQuickOutcome('win-away')">Vitória Canadá</button>
+      </div>
+
+      <button class="btn btn-primary" style="width: 100%;" onclick="saveGuess()">Salvar Palpite</button>
+      <p class="modal-footer-info">* Você pode alterar seu palpite até o início da partida.</p>
+    </div>
+  </div>
+
+  <!-- MODAL: CRIAR NOVO BOLÃO -->
+  <div class="modal-overlay" id="createPoolModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="back-btn" onclick="closeCreatePoolModal()">
+          <i class="fa-solid fa-xmark"></i> Fechar
+        </button>
+        <h3 class="modal-title">Criar Novo Bolão</h3>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="poolNameInput">Nome do Bolão</label>
+        <input type="text" class="form-input" id="poolNameInput" placeholder="Ex: Família Silva, Turma do Bar...">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="poolDescription">Descrição / Regulamento</label>
+        <input type="text" class="form-input" id="poolDescription" placeholder="Ex: R$ 20 por participante, cerveja pro campeão...">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Ícone do Escudo</label>
+        <div style="display: flex; gap: 14px; margin-top: 6px;">
+          <label style="cursor: pointer;">
+            <input type="radio" name="poolShieldSelect" value="green" checked style="display: none;">
+            <span class="pool-shield green" style="border: 2px solid transparent; width: 44px; height: 44px;" id="shieldOpt-green"><i class="fa-solid fa-shield"></i></span>
+          </label>
+          <label style="cursor: pointer;">
+            <input type="radio" name="poolShieldSelect" value="red" style="display: none;">
+            <span class="pool-shield red" style="border: 2px solid transparent; width: 44px; height: 44px;" id="shieldOpt-red"><i class="fa-solid fa-shield"></i></span>
+          </label>
+          <label style="cursor: pointer;">
+            <input type="radio" name="poolShieldSelect" value="blue" style="display: none;">
+            <span class="pool-shield blue" style="border: 2px solid transparent; width: 44px; height: 44px;" id="shieldOpt-blue"><i class="fa-solid fa-shield"></i></span>
+          </label>
+          <label style="cursor: pointer;">
+            <input type="radio" name="poolShieldSelect" value="dark-red" style="display: none;">
+            <span class="pool-shield dark-red" style="border: 2px solid transparent; width: 44px; height: 44px;" id="shieldOpt-dark-red"><i class="fa-solid fa-shield"></i></span>
+          </label>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" style="width: 100%; margin-top: 10px;" onclick="submitCreatePool()">Criar Bolão</button>
+    </div>
+  </div>
+
+  <!-- MODAL: MODO ZICA -->
+  <div class="modal-overlay" id="zicaModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="back-btn" onclick="closeZicaModal()">
+          <i class="fa-solid fa-xmark"></i> Fechar
+        </button>
+        <h3 class="modal-title">Ativar Modo Zica</h3>
+      </div>
+
+      <p style="font-size: 0.85rem; color: var(--text-muted-light); margin-bottom: 20px; line-height: 1.5;">
+        Selecione um amigo de quem você deseja sabotar o palpite no próximo jogo (<span class="text-green">EUA x CANADÁ</span>). Se ele errar o placar exato, você ganha <strong>10 pts</strong> extras. Se ele cravar, você perde <strong>5 pts</strong>.
+      </p>
+
+      <div class="zica-select-list" id="zicaFriendsList">
+        <!-- Dynamically populated friends list -->
+      </div>
+
+      <button class="btn btn-gold" style="width: 100%;" id="activateZicaBtn" onclick="activateZica()" disabled>Confirmar Zica!</button>
+    </div>
+  </div>
+
+  <!-- Notification Toast Container -->
+  <div class="toast-notification" id="toastNotification">
+    <span class="toast-icon" id="toastIcon"></span>
+    <span class="toast-text" id="toastText">Ação realizada com sucesso!</span>
+  </div>
+
+  <!-- Core Javascript -->
+  <script src="app.js"></script>
+</body>
+</html>
