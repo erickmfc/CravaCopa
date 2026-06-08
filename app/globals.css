@@ -356,14 +356,9 @@ main {
   font-size: 0.8rem;
 }
 
-/* Main SPA routing switch styling */
+/* Page animations */
 .page {
-  display: none;
   animation: fadeIn 0.4s ease forwards;
-}
-
-.page.active {
-  display: block;
 }
 
 @keyframes fadeIn {
@@ -388,7 +383,7 @@ main {
 .hero-banner {
   grid-column: span 2;
   position: relative;
-  background-image: linear-gradient(90deg, rgba(11,17,26,0.95) 35%, rgba(11,17,26,0.4) 100%), url('assets/hero_bg.png');
+  background-image: linear-gradient(90deg, rgba(11,17,26,0.95) 35%, rgba(11,17,26,0.4) 100%), url('/assets/hero_bg.png');
   background-size: cover;
   background-position: center;
   border-radius: var(--border-radius-lg);
@@ -2047,6 +2042,57 @@ main {
   font-weight: 600;
 }
 
+/* Supabase Task List Demo panel styling */
+.supabase-demo-panel {
+  background-color: var(--bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  padding: 24px;
+  margin-top: 32px;
+}
+
+.supabase-demo-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.supabase-badge {
+  font-size: 0.65rem;
+  background-color: #3ECF8E;
+  color: #000000;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.todos-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.todo-item {
+  background-color: var(--bg-main);
+  border: 1px solid var(--color-border-light);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.todo-item i {
+  color: var(--color-primary);
+}
+
 /* Responsive Media Queries */
 @media (max-width: 1024px) {
   .dashboard-grid {
@@ -2125,6 +2171,10 @@ main {
     font-size: 0.7rem;
     font-weight: 600;
     gap: 2px;
+  }
+  
+  .nav-links li a span {
+    font-size: 0.7rem;
   }
   
   .nav-links li.active a::after {
