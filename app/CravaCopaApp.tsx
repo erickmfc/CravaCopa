@@ -507,10 +507,10 @@ export default function CravaCopaApp({ initialTodos }: CravaCopaAppProps) {
                   </div>
                   
                   <div className="hero-tags">
-                    <div className="tag-item"><i class="fa-solid fa-circle-check"></i> 100% GRÁTIS</div>
-                    <div className="tag-item"><i class="fa-solid fa-circle-check"></i> SEM APOSTAS</div>
-                    <div className="tag-item"><i class="fa-solid fa-circle-check"></i> SÓ RESENHA</div>
-                    <div className="tag-item"><i class="fa-solid fa-circle-check"></i> RANKING EM TEMPO REAL</div>
+                    <div className="tag-item"><i className="fa-solid fa-circle-check"></i> 100% GRÁTIS</div>
+                    <div className="tag-item"><i className="fa-solid fa-circle-check"></i> SEM APOSTAS</div>
+                    <div className="tag-item"><i className="fa-solid fa-circle-check"></i> SÓ RESENHA</div>
+                    <div className="tag-item"><i className="fa-solid fa-circle-check"></i> RANKING EM TEMPO REAL</div>
                   </div>
                 </div>
 
@@ -645,7 +645,7 @@ export default function CravaCopaApp({ initialTodos }: CravaCopaAppProps) {
                     <div className="zica-icon-container">
                       <i className="fa-solid fa-bolt"></i>
                     </div>
-                    <h3 class="zica-card-title">Modo Zica</h3>
+                    <h3 className="zica-card-title">Modo Zica</h3>
                   </div>
                   <p className="zica-card-desc">Detone o palpite de um amigo e ganhe ainda mais vantagem na pontuação geral!</p>
                   <button className="btn btn-gold" onClick={() => setZicaOpen(true)}>
