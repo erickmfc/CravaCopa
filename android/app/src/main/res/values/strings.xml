@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">CravaCopa</string>
+    <string name="supabase_url">https://agxcyichjfdovrmgcfdj.supabase.co</string>
+    <string name="supabase_anon_key">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFneGN5aWNoamZkb3ZybWdjZmRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA5NTExNjIsImV4cCI6MjA5NjUyNzE2Mn0.Y0wt3sya5mhVjEmk1quNvf35E-TBpTMvwRPuGAQfPMk</string>
+</resources>
