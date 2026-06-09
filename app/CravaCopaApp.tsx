@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import { createClient } from "@/utils/supabase/client";
 
 interface Todo {
   id: number | string;
@@ -115,47 +116,56 @@ export default function CravaCopaApp({ initialTodos }: CravaCopaAppProps) {
   const [matches, setMatches] = useState([
     {
       id: "match-1",
-      dateStr: "12/06 - 20:00",
-      stadium: "MetLife Stadium",
+      dateStr: "11/06 - 18:00",
+      stadium: "Estádio Azteca (Cidade do México)",
       phase: "grupo",
-      homeTeam: { name: "EUA", flag: "🇺🇸" },
-      awayTeam: { name: "CANADÁ", flag: "🇨🇦" },
-      userGuess: { home: 2, away: 1 } as { home: number; away: number } | null
+      homeTeam: { name: "MÉXICO", flag: "🇲🇽" },
+      awayTeam: { name: "ÁFRICA DO SUL", flag: "🇿🇦" },
+      userGuess: { home: 2, away: 0 } as { home: number; away: number } | null
     },
     {
       id: "match-2",
-      dateStr: "13/06 - 18:00",
-      stadium: "AT&T Stadium",
+      dateStr: "12/06 - 19:00",
+      stadium: "Toronto Stadium (Toronto)",
       phase: "grupo",
-      homeTeam: { name: "MÉXICO", flag: "🇲🇽" },
-      awayTeam: { name: "IRÃ", flag: "🇮🇷" },
+      homeTeam: { name: "CANADÁ", flag: "🇨🇦" },
+      awayTeam: { name: "BÓSNIA E HERZEGOVINA", flag: "🇧🇦" },
       userGuess: null as { home: number; away: number } | null
     },
     {
       id: "match-3",
-      dateStr: "14/06 - 16:00",
-      stadium: "Hard Rock Stadium",
+      dateStr: "12/06 - 21:00",
+      stadium: "Los Angeles Stadium (SoFi Stadium)",
+      phase: "grupo",
+      homeTeam: { name: "EUA", flag: "🇺🇸" },
+      awayTeam: { name: "PARAGUAI", flag: "🇵🇾" },
+      userGuess: null as { home: number; away: number } | null
+    },
+    {
+      id: "match-4",
+      dateStr: "13/06 - 19:00",
+      stadium: "New York New Jersey Stadium (MetLife Stadium)",
       phase: "grupo",
       homeTeam: { name: "BRASIL", flag: "🇧🇷" },
       awayTeam: { name: "MARROCOS", flag: "🇲🇦" },
       userGuess: null as { home: number; away: number } | null
     },
     {
-      id: "match-4",
-      dateStr: "18/06 - 21:00",
-      stadium: "SoFi Stadium",
+      id: "match-5",
+      dateStr: "13/06 - 21:00",
+      stadium: "BC Place (Vancouver)",
       phase: "grupo",
-      homeTeam: { name: "EUA", flag: "🇺🇸" },
-      awayTeam: { name: "MÉXICO", flag: "🇲🇽" },
+      homeTeam: { name: "AUSTRÁLIA", flag: "🇦🇺" },
+      awayTeam: { name: "TURQUIA", flag: "🇹🇷" },
       userGuess: null as { home: number; away: number } | null
     },
     {
-      id: "match-5",
-      dateStr: "22/06 - 19:00",
-      stadium: "BC Place",
+      id: "match-6",
+      dateStr: "13/06 - 18:00",
+      stadium: "San Francisco Bay Area Stadium",
       phase: "grupo",
-      homeTeam: { name: "CANADÁ", flag: "🇨🇦" },
-      awayTeam: { name: "IRÃ", flag: "🇮🇷" },
+      homeTeam: { name: "CATAR", flag: "🇶🇦" },
+      awayTeam: { name: "SUÍÇA", flag: "🇨🇭" },
       userGuess: null as { home: number; away: number } | null
     }
   ]);
@@ -169,6 +179,167 @@ export default function CravaCopaApp({ initialTodos }: CravaCopaAppProps) {
 
   // Selected Active Pool state for "Resenha FC"
   const [selectedPoolId, setSelectedPoolId] = useState("resenha-fc");
+
+  // Supabase states
+  const supabase = createClient();
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [dbProfiles, setDbProfiles] = useState<any[]>([]);
+  const [useMockData, setUseMockData] = useState(false);
+  const [authTab, setAuthTab] = useState<"login" | "register">("login");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [authLoading, setAuthLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Load real data from Supabase
+  const loadRealData = async (currentUserId: string) => {
+    try {
+      setIsLoading(true);
+
+      // 1. Fetch matches
+      const { data: matchesData, error: matchesErr } = await supabase
+        .from("matches")
+        .select("*")
+        .order("created_at", { ascending: true });
+      
+      if (matchesErr) throw matchesErr;
+
+      if (matchesData && matchesData.length > 0) {
+        setMatches(matchesData.map(m => ({
+          id: m.id,
+          dateStr: m.date_str,
+          stadium: m.stadium,
+          phase: m.phase,
+          homeTeam: { name: m.home_team, flag: m.home_flag },
+          awayTeam: { name: m.away_team, flag: m.away_flag },
+          homeScore: m.home_score,
+          awayScore: m.away_score,
+          userGuess: null
+        })));
+      }
+
+      // 2. Fetch profiles (real players)
+      const { data: profilesData, error: profilesErr } = await supabase
+        .from("profiles")
+        .select("*")
+        .order("points", { ascending: false });
+
+      if (profilesErr) throw profilesErr;
+
+      if (profilesData) {
+        setDbProfiles(profilesData);
+        setRankingDestaques(profilesData.map((p, idx) => ({
+          name: p.full_name || p.username || "Jogador",
+          points: p.points || 0,
+          avatar: p.avatar_url || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80",
+          zicas: p.zicas_used || 0,
+          pos: `${idx + 1}º`,
+          isYou: p.id === currentUserId
+        })));
+      }
+
+      // 3. Fetch pools
+      const { data: poolsData, error: poolsErr } = await supabase
+        .from("pools")
+        .select("*, pool_members(profile_id)");
+
+      if (poolsErr) throw poolsErr;
+
+      if (poolsData) {
+        setPools(poolsData.map(p => {
+          const members = p.pool_members || [];
+          const isMember = members.some((m: any) => m.profile_id === currentUserId);
+          return {
+            id: p.id,
+            name: p.name,
+            shield: p.shield_color || "green",
+            membersCount: members.length,
+            userPoints: isMember ? 9 : 0,
+            userRank: 1,
+            createdBy: p.created_by,
+            createdDate: new Date(p.created_at).toLocaleDateString("pt-BR"),
+            type: "Público",
+            isMember
+          };
+        }));
+      }
+
+      // 4. Fetch user's guesses
+      const { data: guessesData, error: guessesErr } = await supabase
+        .from("guesses")
+        .select("*")
+        .eq("profile_id", currentUserId);
+
+      if (guessesErr) throw guessesErr;
+
+      if (guessesData) {
+        setMatches(prev => prev.map(m => {
+          const guess = guessesData.find(g => g.match_id === m.id);
+          return {
+            ...m,
+            userGuess: guess ? { home: guess.home_score, away: guess.away_score } : null
+          };
+        }));
+      }
+
+      // 5. Fetch chat messages
+      if (selectedPoolId) {
+        const { data: messagesData, error: messagesErr } = await supabase
+          .from("chat_messages")
+          .select("*, profiles(username, full_name, avatar_url)")
+          .eq("pool_id", selectedPoolId)
+          .order("created_at", { ascending: true });
+        
+        if (messagesErr) throw messagesErr;
+
+        if (messagesData) {
+          setChatMessages(messagesData.map(msg => ({
+            sender: msg.profiles?.full_name || msg.profiles?.username || "Jogador",
+            avatar: msg.profiles?.avatar_url || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80",
+            time: new Date(msg.created_at).toLocaleTimeString("pt-BR", { hour: '2-digit', minute: '2-digit' }),
+            text: msg.message_text,
+            isOwn: msg.profile_id === currentUserId
+          })));
+        }
+      }
+
+      setUseMockData(false);
+    } catch (err: any) {
+      console.warn("Supabase desconfigurado ou tabelas ausentes. Usando dados locais de simulação. Detalhe:", err.message);
+      setUseMockData(true);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Auth initialization
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        setCurrentUser(session.user);
+        loadRealData(session.user.id);
+      } else {
+        setIsLoading(false);
+      }
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session) {
+        setCurrentUser(session.user);
+        loadRealData(session.user.id);
+      } else {
+        setCurrentUser(null);
+        setIsLoading(false);
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [selectedPoolId]);
+
 
   // Countdown Ticker State
   const [timeLeft, setTimeLeft] = useState({ days: 2, hours: 10, minutes: 18, seconds: 45 });
@@ -202,7 +373,7 @@ export default function CravaCopaApp({ initialTodos }: CravaCopaAppProps) {
   // Timer Countdown Effect
   // ==========================================
   useEffect(() => {
-    const targetDate = new Date("2026-06-12T20:00:00").getTime();
+    const targetDate = new Date("2026-06-11T18:00:00").getTime();
     const interval = setInterval(() => {
       const now = new Date().getTime();
       const distance = targetDate - now;
@@ -252,27 +423,98 @@ export default function CravaCopaApp({ initialTodos }: CravaCopaAppProps) {
     setUserDropdownOpen(false);
   };
 
-  const handleJoinPool = (e: React.MouseEvent, poolId: string) => {
-    e.stopPropagation();
-    setPools(prev => prev.map(p => {
-      if (p.id === poolId) {
-        return { ...p, isMember: true, membersCount: p.membersCount + 1, userPoints: 9, userRank: p.membersCount + 1 };
+  const handleAuth = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim() || !password.trim()) {
+      triggerToast("Por favor, preencha todos os campos!", "warning");
+      return;
+    }
+    setAuthLoading(true);
+    try {
+      if (authTab === "login") {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        triggerToast("Login efetuado com sucesso!", "success");
+      } else {
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              username: username || email.split("@")[0],
+              full_name: fullName || email.split("@")[0],
+              avatar_url: `https://api.dicebear.com/7.x/bottts/svg?seed=${username || email}`
+            }
+          }
+        });
+        if (error) throw error;
+        triggerToast("Cadastro realizado com sucesso! Faça login.", "success");
+        setAuthTab("login");
       }
-      return p;
-    }));
-    triggerToast("Você entrou no bolão!", "success");
+    } catch (err: any) {
+      triggerToast(err.message || "Erro de autenticação", "warning");
+    } finally {
+      setAuthLoading(false);
+    }
   };
 
-  const handleLeavePool = () => {
-    if (confirm("Deseja realmente sair deste bolão? Seus pontos serão limpos nesta liga.")) {
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setCurrentUser(null);
+    navigateTo("home");
+    triggerToast("Você saiu da conta.", "warning");
+  };
+
+  const handleJoinPool = async (e: React.MouseEvent, poolId: string) => {
+    e.stopPropagation();
+    if (useMockData || !currentUser) {
       setPools(prev => prev.map(p => {
-        if (p.id === "resenha-fc") {
-          return { ...p, isMember: false, membersCount: p.membersCount - 1 };
+        if (p.id === poolId) {
+          return { ...p, isMember: true, membersCount: p.membersCount + 1, userPoints: 9, userRank: p.membersCount + 1 };
         }
         return p;
       }));
-      navigateTo("boloes");
-      triggerToast("Você saiu do bolão.", "warning");
+      triggerToast("Você entrou no bolão!", "success");
+      return;
+    }
+    try {
+      const { error } = await supabase
+        .from("pool_members")
+        .insert({ pool_id: poolId, profile_id: currentUser.id });
+      if (error) throw error;
+      triggerToast("Você entrou no bolão!", "success");
+      loadRealData(currentUser.id);
+    } catch (err: any) {
+      triggerToast(err.message || "Erro ao entrar no bolão", "warning");
+    }
+  };
+
+  const handleLeavePool = async () => {
+    if (confirm("Deseja realmente sair deste bolão? Seus pontos serão limpos nesta liga.")) {
+      if (useMockData || !currentUser) {
+        setPools(prev => prev.map(p => {
+          if (p.id === "resenha-fc") {
+            return { ...p, isMember: false, membersCount: p.membersCount - 1 };
+          }
+          return p;
+        }));
+        navigateTo("boloes");
+        triggerToast("Você saiu do bolão.", "warning");
+        return;
+      }
+      try {
+        const { error } = await supabase
+          .from("pool_members")
+          .delete()
+          .eq("pool_id", selectedPoolId)
+          .eq("profile_id", currentUser.id);
+        if (error) throw error;
+        navigateTo("boloes");
+        triggerToast("Você saiu do bolão.", "warning");
+        loadRealData(currentUser.id);
+      } catch (err: any) {
+        triggerToast(err.message || "Erro ao sair do bolão", "warning");
+      }
     }
   };
 
@@ -286,16 +528,37 @@ export default function CravaCopaApp({ initialTodos }: CravaCopaAppProps) {
     setGuessModalOpen(true);
   };
 
-  const handleSaveGuess = () => {
+  const handleSaveGuess = async () => {
     if (!selectedMatchId) return;
-    setMatches(prev => prev.map(m => {
-      if (m.id === selectedMatchId) {
-        return { ...m, userGuess: { home: tempHomeScore, away: tempAwayScore } };
-      }
-      return m;
-    }));
-    setGuessModalOpen(false);
-    triggerToast("Palpite salvo com sucesso!", "success");
+    if (useMockData || !currentUser) {
+      setMatches(prev => prev.map(m => {
+        if (m.id === selectedMatchId) {
+          return { ...m, userGuess: { home: tempHomeScore, away: tempAwayScore } };
+        }
+        return m;
+      }));
+      setGuessModalOpen(false);
+      triggerToast("Palpite salvo com sucesso!", "success");
+      return;
+    }
+    try {
+      const { error } = await supabase
+        .from("guesses")
+        .upsert({
+          profile_id: currentUser.id,
+          match_id: selectedMatchId,
+          home_score: tempHomeScore,
+          away_score: tempAwayScore
+        }, {
+          onConflict: "profile_id,match_id"
+        });
+      if (error) throw error;
+      setGuessModalOpen(false);
+      triggerToast("Palpite salvo com sucesso!", "success");
+      loadRealData(currentUser.id);
+    } catch (err: any) {
+      triggerToast(err.message || "Erro ao salvar palpite", "warning");
+    }
   };
 
   const handleQuickOutcome = (outcome: "win-home" | "draw" | "win-away") => {
@@ -312,79 +575,150 @@ export default function CravaCopaApp({ initialTodos }: CravaCopaAppProps) {
   };
 
   // Pool Creator
-  const handleCreatePool = () => {
+  const handleCreatePool = async () => {
     if (!newPoolName.trim()) {
       triggerToast("Por favor, insira o nome do bolão!", "warning");
       return;
     }
-
     const newId = newPoolName.toLowerCase().replace(/[^a-z0-9]+/g, "-");
-    const newPoolObj = {
-      id: newId,
-      name: newPoolName,
-      shield: newPoolShield,
-      membersCount: 1,
-      userPoints: 9,
-      userRank: 1,
-      createdBy: "O Vidente",
-      createdDate: new Date().toLocaleDateString("pt-BR"),
-      type: "Público",
-      isMember: true
-    };
+    if (useMockData || !currentUser) {
+      const newPoolObj = {
+        id: newId,
+        name: newPoolName,
+        shield: newPoolShield,
+        membersCount: 1,
+        userPoints: 9,
+        userRank: 1,
+        createdBy: "O Vidente",
+        createdDate: new Date().toLocaleDateString("pt-BR"),
+        type: "Público",
+        isMember: true
+      };
+      setPools([newPoolObj, ...pools]);
+      setCreatePoolOpen(false);
+      setNewPoolName("");
+      setNewPoolDesc("");
+      triggerToast(`Bolão "${newPoolName}" criado! Chame seus amigos.`, "success");
+      return;
+    }
+    try {
+      const { error: poolError } = await supabase
+        .from("pools")
+        .insert({
+          id: newId,
+          name: newPoolName,
+          description: newPoolDesc,
+          shield_color: newPoolShield,
+          created_by: currentUser.id
+        });
+      if (poolError) throw poolError;
 
-    setPools([newPoolObj, ...pools]);
-    setCreatePoolOpen(false);
-    setNewPoolName("");
-    setNewPoolDesc("");
-    triggerToast(`Bolão "${newPoolName}" criado! Chame seus amigos.`, "success");
+      const { error: memberError } = await supabase
+        .from("pool_members")
+        .insert({
+          pool_id: newId,
+          profile_id: currentUser.id
+        });
+      if (memberError) throw memberError;
+
+      setCreatePoolOpen(false);
+      setNewPoolName("");
+      setNewPoolDesc("");
+      triggerToast(`Bolão "${newPoolName}" criado! Chame seus amigos.`, "success");
+      loadRealData(currentUser.id);
+    } catch (err: any) {
+      triggerToast(err.message || "Erro ao criar bolão", "warning");
+    }
   };
 
   // Zica Mode
-  const handleActivateZica = () => {
+  const handleActivateZica = async () => {
     if (!selectedZicaTarget) return;
 
-    // Increment in list
-    setRankingDestaques(prev => prev.map(u => {
-      if (u.name === selectedZicaTarget) {
-        return { ...u, zicas: u.zicas + 1 };
-      }
-      return u;
-    }));
+    if (useMockData || !currentUser) {
+      setRankingDestaques(prev => prev.map(u => {
+        if (u.name === selectedZicaTarget) {
+          return { ...u, zicas: u.zicas + 1 };
+        }
+        return u;
+      }));
+      setTopZicas(prev => {
+        const exists = prev.find(z => z.name === selectedZicaTarget);
+        let updatedList = [...prev];
+        if (exists) {
+          updatedList = prev.map(z => z.name === selectedZicaTarget ? { ...z, zicas: z.zicas + 1 } : z);
+        } else {
+          updatedList.push({ name: selectedZicaTarget, zicas: 1, pos: "" });
+        }
+        updatedList.sort((a, b) => b.zicas - a.zicas);
+        return updatedList.map((z, idx) => ({ ...z, pos: `${idx + 1}º` }));
+      });
+      const target = selectedZicaTarget;
+      setZicaOpen(false);
+      setSelectedZicaTarget(null);
+      triggerToast(`Zica ativada contra ${target}! ⚡`, "warning");
+      return;
+    }
 
-    // Update Top Zicas list
-    setTopZicas(prev => {
-      const exists = prev.find(z => z.name === selectedZicaTarget);
-      let updatedList = [...prev];
-      if (exists) {
-        updatedList = prev.map(z => z.name === selectedZicaTarget ? { ...z, zicas: z.zicas + 1 } : z);
-      } else {
-        updatedList.push({ name: selectedZicaTarget, zicas: 1, pos: "" });
-      }
-      updatedList.sort((a, b) => b.zicas - a.zicas);
-      return updatedList.map((z, idx) => ({ ...z, pos: `${idx + 1}º` }));
-    });
+    try {
+      const targetProfile = dbProfiles.find(p => (p.full_name || p.username) === selectedZicaTarget);
+      if (!targetProfile) return;
+      if (!selectedMatchId) return;
 
-    const target = selectedZicaTarget;
-    setZicaOpen(false);
-    setSelectedZicaTarget(null);
-    triggerToast(`Zica ativada contra ${target}! ⚡`, "warning");
+      const { error } = await supabase
+        .from("guesses")
+        .upsert({
+          profile_id: currentUser.id,
+          match_id: selectedMatchId,
+          zica_target_profile_id: targetProfile.id
+        }, {
+          onConflict: "profile_id,match_id"
+        });
+      if (error) throw error;
+
+      const target = selectedZicaTarget;
+      setZicaOpen(false);
+      setSelectedZicaTarget(null);
+      triggerToast(`Zica ativada contra ${target}! ⚡`, "warning");
+      loadRealData(currentUser.id);
+    } catch (err: any) {
+      triggerToast(err.message || "Erro ao ativar Modo Zica", "warning");
+    }
   };
 
   // Chat message send
-  const handleSendChatMessage = (e: React.FormEvent) => {
+  const handleSendChatMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!chatInput.trim()) return;
 
-    const newMsg = {
-      sender: "O Vidente",
-      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80",
-      time: "Hoje " + new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }),
-      text: chatInput,
-      isOwn: true
-    };
+    if (useMockData || !currentUser) {
+      const newMsg = {
+        sender: "O Vidente",
+        avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80",
+        time: "Hoje " + new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }),
+        text: chatInput,
+        isOwn: true
+      };
+      setChatMessages([...chatMessages, newMsg]);
+      setChatInput("");
+      return;
+    }
 
-    setChatMessages([...chatMessages, newMsg]);
+    const text = chatInput;
     setChatInput("");
+    try {
+      const { error } = await supabase
+        .from("chat_messages")
+        .insert({
+          pool_id: selectedPoolId,
+          profile_id: currentUser.id,
+          message_text: text
+        });
+      if (error) throw error;
+      loadRealData(currentUser.id);
+    } catch (err: any) {
+      triggerToast(err.message || "Erro ao enviar mensagem", "warning");
+    }
   };
 
   const handleCopyInvite = () => {
@@ -465,28 +799,134 @@ export default function CravaCopaApp({ initialTodos }: CravaCopaAppProps) {
             </div>
 
             <div className="user-profile-menu" onClick={() => setUserDropdownOpen(!userDropdownOpen)}>
-              <img className="user-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80" alt="Avatar Usuário" />
-              <span className="user-name">O Vidente</span>
+              <img className="user-avatar" src={currentUser ? (dbProfiles.find(p => p.id === currentUser.id)?.avatar_url || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80") : "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80"} alt="Avatar Usuário" />
+              <span className="user-name">{currentUser ? (dbProfiles.find(p => p.id === currentUser.id)?.full_name || currentUser.email.split("@")[0]) : "O Vidente"}</span>
               <i className="fa-solid fa-chevron-down dropdown-arrow"></i>
             </div>
 
             <div className={`user-dropdown ${userDropdownOpen ? "show" : ""}`}>
+              {currentUser && (
+                <div className="dropdown-info" style={{ padding: "10px 16px", borderBottom: "1px solid var(--color-border)", fontSize: "0.8rem", color: "var(--text-muted-light)" }}>
+                  Logado como:<br/><strong>{currentUser.email}</strong>
+                </div>
+              )}
               <div className="dropdown-item" onClick={() => navigateTo("detalhes")}>
                 <i className="fa-solid fa-user"></i> Meu Perfil
               </div>
               <div className="dropdown-item" onClick={() => triggerToast("Configurações salvas!", "success")}>
                 <i className="fa-solid fa-gear"></i> Configurações
               </div>
-              <div className="dropdown-item text-red" onClick={() => triggerToast("Sessão encerrada", "warning")}>
-                <i className="fa-solid fa-right-from-bracket"></i> Sair
-              </div>
+              {currentUser ? (
+                <div className="dropdown-item text-red" onClick={handleLogout}>
+                  <i className="fa-solid fa-right-from-bracket"></i> Sair
+                </div>
+              ) : (
+                <div className="dropdown-item text-green" onClick={() => { setAuthTab("login"); setUserDropdownOpen(false); }}>
+                  <i className="fa-solid fa-right-to-bracket"></i> Entrar
+                </div>
+              )}
             </div>
           </div>
         </div>
       </header>
 
       {/* Main Content Pages */}
-      <main>
+      <main style={!currentUser ? { display: "flex", justifyContent: "center", alignItems: "center", minHeight: "calc(100vh - 80px)", padding: "20px" } : {}}>
+        {!currentUser ? (
+          <div className="auth-card" style={{ backgroundColor: "var(--bg-card)", border: "1.5px solid var(--color-border)", borderRadius: "var(--border-radius-lg)", padding: "32px", width: "100%", maxWidth: "420px", boxShadow: "0 10px 25px rgba(0,0,0,0.5)" }}>
+            <div style={{ display: "flex", marginBottom: "24px", borderBottom: "1px solid var(--color-border)" }}>
+              <button 
+                style={{ flex: 1, padding: "12px", background: "none", border: "none", color: authTab === "login" ? "var(--color-primary)" : "var(--text-muted-light)", fontWeight: 700, borderBottom: authTab === "login" ? "2px solid var(--color-primary)" : "none", cursor: "pointer" }}
+                onClick={() => setAuthTab("login")}
+              >
+                Entrar
+              </button>
+              <button 
+                style={{ flex: 1, padding: "12px", background: "none", border: "none", color: authTab === "register" ? "var(--color-primary)" : "var(--text-muted-light)", fontWeight: 700, borderBottom: authTab === "register" ? "2px solid var(--color-primary)" : "none", cursor: "pointer" }}
+                onClick={() => setAuthTab("register")}
+              >
+                Criar Conta
+              </button>
+            </div>
+
+            <form onSubmit={handleAuth} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+              {authTab === "register" && (
+                <>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                    <label style={{ fontSize: "0.8rem", color: "var(--text-muted-light)" }}>Nome de Usuário</label>
+                    <input 
+                      type="text" 
+                      placeholder="ex: joaosilva" 
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      style={{ padding: "10px 14px", borderRadius: "8px", border: "1px solid var(--color-border)", backgroundColor: "rgba(255,255,255,0.03)", color: "white", outline: "none" }}
+                      required
+                    />
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                    <label style={{ fontSize: "0.8rem", color: "var(--text-muted-light)" }}>Nome Completo</label>
+                    <input 
+                      type="text" 
+                      placeholder="ex: João Silva" 
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      style={{ padding: "10px 14px", borderRadius: "8px", border: "1px solid var(--color-border)", backgroundColor: "rgba(255,255,255,0.03)", color: "white", outline: "none" }}
+                      required
+                    />
+                  </div>
+                </>
+              )}
+
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={{ fontSize: "0.8rem", color: "var(--text-muted-light)" }}>Email</label>
+                <input 
+                  type="email" 
+                  placeholder="seu@email.com" 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  style={{ padding: "10px 14px", borderRadius: "8px", border: "1px solid var(--color-border)", backgroundColor: "rgba(255,255,255,0.03)", color: "white", outline: "none" }}
+                  required
+                />
+              </div>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={{ fontSize: "0.8rem", color: "var(--text-muted-light)" }}>Senha</label>
+                <input 
+                  type="password" 
+                  placeholder="Mínimo 6 caracteres" 
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  style={{ padding: "10px 14px", borderRadius: "8px", border: "1px solid var(--color-border)", backgroundColor: "rgba(255,255,255,0.03)", color: "white", outline: "none" }}
+                  required
+                />
+              </div>
+
+              <button 
+                type="submit" 
+                className="btn btn-primary" 
+                style={{ width: "100%", padding: "12px", marginTop: "10px", display: "flex", justifyContent: "center", alignItems: "center", gap: "8px" }}
+                disabled={authLoading}
+              >
+                {authLoading ? (
+                  <>Carregando...</>
+                ) : authTab === "login" ? (
+                  "Entrar no Bolão"
+                ) : (
+                  "Finalizar Cadastro"
+                )}
+              </button>
+            </form>
+
+            <div style={{ marginTop: "20px", display: "flex", flexDirection: "column", gap: "10px", padding: "12px", border: "1px dashed var(--color-border)", borderRadius: "8px", fontSize: "0.8rem", color: "var(--text-muted-light)", backgroundColor: "rgba(255,255,255,0.01)" }}>
+              <div style={{ display: "flex", gap: "8px", alignItems: "center", color: "var(--color-primary)" }}>
+                <i className="fa-solid fa-server"></i>
+                <strong>Supabase Database Link</strong>
+              </div>
+              <div>Crie sua conta para registrar palpites no banco de dados e competir no ranking real.</div>
+            </div>
+          </div>
+        ) : (
+          <>
         {/* ==============================================
              3. TELA PRINCIPAL (DASHBOARD / HOME)
              ============================================== */}
@@ -1013,6 +1453,8 @@ export default function CravaCopaApp({ initialTodos }: CravaCopaAppProps) {
               </ul>
             </div>
           </section>
+        )}
+        </>
         )}
       </main>
 
