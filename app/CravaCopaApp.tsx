@@ -26,7 +26,7 @@ export default function CravaCopaApp({ initialTodos }: CravaCopaAppProps) {
       name: "Resenha FC",
       shield: "green",
       membersCount: 27,
-      userPoints: 1070,
+      userPoints: 9,
       userRank: 3,
       createdBy: "O Vidente",
       createdDate: "01/05/2026",
@@ -38,7 +38,7 @@ export default function CravaCopaApp({ initialTodos }: CravaCopaAppProps) {
       name: "Família & Amigos",
       shield: "red",
       membersCount: 18,
-      userPoints: 850,
+      userPoints: 7,
       userRank: 5,
       createdBy: "Tio João",
       createdDate: "10/05/2026",
@@ -50,7 +50,7 @@ export default function CravaCopaApp({ initialTodos }: CravaCopaAppProps) {
       name: "Galera do Trabalho",
       shield: "blue",
       membersCount: 32,
-      userPoints: 1280,
+      userPoints: 11,
       userRank: 1,
       createdBy: "Chefe Carlos",
       createdDate: "25/04/2026",
@@ -62,7 +62,7 @@ export default function CravaCopaApp({ initialTodos }: CravaCopaAppProps) {
       name: "Boleiros de Plantão",
       shield: "dark-red",
       membersCount: 41,
-      userPoints: 750,
+      userPoints: 6,
       userRank: 8,
       createdBy: "Rafael S.",
       createdDate: "12/05/2026",
@@ -96,14 +96,14 @@ export default function CravaCopaApp({ initialTodos }: CravaCopaAppProps) {
   ]);
 
   const [rankingDestaques, setRankingDestaques] = useState([
-    { name: "Rafael S.", points: 1280, avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&q=80", zicas: 2, pos: "1º" },
-    { name: "Juliana M.", points: 1150, avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&q=80", zicas: 1, pos: "2º" },
-    { name: "O Vidente", points: 1070, avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80", zicas: 0, pos: "3º", isYou: true },
-    { name: "Lucas C.", points: 950, avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80", zicas: 0, pos: "4º" },
-    { name: "Amanda R.", points: 880, avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=100&q=80", zicas: 0, pos: "5º" },
-    { name: "Thiago G.", points: 790, avatar: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=100&q=80", zicas: 1, pos: "6º" },
-    { name: "Beatriz L.", points: 650, avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=100&q=80", zicas: 0, pos: "7º" },
-    { name: "Felipe A.", points: 610, avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=100&q=80", zicas: 2, pos: "8º" }
+    { name: "Rafael S.", points: 12, avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&q=80", zicas: 2, pos: "1º" },
+    { name: "Juliana M.", points: 10, avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&q=80", zicas: 1, pos: "2º" },
+    { name: "O Vidente", points: 9, avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80", zicas: 0, pos: "3º", isYou: true },
+    { name: "Lucas C.", points: 8, avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80", zicas: 0, pos: "4º" },
+    { name: "Amanda R.", points: 7, avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=100&q=80", zicas: 0, pos: "5º" },
+    { name: "Thiago G.", points: 6, avatar: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=100&q=80", zicas: 1, pos: "6º" },
+    { name: "Beatriz L.", points: 5, avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=100&q=80", zicas: 0, pos: "7º" },
+    { name: "Felipe A.", points: 4, avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=100&q=80", zicas: 2, pos: "8º" }
   ]);
 
   const [topZicas, setTopZicas] = useState([
@@ -256,7 +256,7 @@ export default function CravaCopaApp({ initialTodos }: CravaCopaAppProps) {
     e.stopPropagation();
     setPools(prev => prev.map(p => {
       if (p.id === poolId) {
-        return { ...p, isMember: true, membersCount: p.membersCount + 1, userPoints: 1070, userRank: p.membersCount + 1 };
+        return { ...p, isMember: true, membersCount: p.membersCount + 1, userPoints: 9, userRank: p.membersCount + 1 };
       }
       return p;
     }));
@@ -324,7 +324,7 @@ export default function CravaCopaApp({ initialTodos }: CravaCopaAppProps) {
       name: newPoolName,
       shield: newPoolShield,
       membersCount: 1,
-      userPoints: 1070,
+      userPoints: 9,
       userRank: 1,
       createdBy: "O Vidente",
       createdDate: new Date().toLocaleDateString("pt-BR"),
@@ -996,19 +996,19 @@ export default function CravaCopaApp({ initialTodos }: CravaCopaAppProps) {
               <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "14px", color: "var(--text-muted-light)" }}>
                 <li style={{ display: "flex", gap: "10px", alignItems: "flex-start" }}>
                   <i className="fa-solid fa-check text-green" style={{ marginTop: "4px" }}></i>
-                  <div><strong>Cravada Exata (25 pts):</strong> Você acerta o placar exato da partida (Ex: palpita 2x1 e o jogo termina 2x1).</div>
+                  <div><strong>Cravada Exata (3 pts):</strong> Você acerta exatamente o número de gols de cada time (Ex: palpita 3x0 e o jogo termina 3x0).</div>
                 </li>
                 <li style={{ display: "flex", gap: "10px", alignItems: "flex-start" }}>
                   <i className="fa-solid fa-check text-green" style={{ marginTop: "4px" }}></i>
-                  <div><strong>Vencedor & Saldo de Gols (18 pts):</strong> Você acerta quem venceu e a diferença de gols, mas erra o número de gols (Ex: palpita 3x1 e o jogo termina 2x0).</div>
+                  <div><strong>Acertar a Tendência (1 pt):</strong> Você acerta qual time venceu (ou se foi empate), mas erra o placar exato (Ex: palpita 2x1 ou 4x0 e o jogo termina 3x0).</div>
                 </li>
                 <li style={{ display: "flex", gap: "10px", alignItems: "flex-start" }}>
-                  <i className="fa-solid fa-check text-green" style={{ marginTop: "4px" }}></i>
-                  <div><strong>Apenas Tendência (10 pts):</strong> Você acerta apenas o vencedor ou empate, mas erra o placar e a diferença (Ex: palpita 1x0 e o jogo termina 3x1).</div>
+                  <i className="fa-solid fa-xmark text-red" style={{ marginTop: "4px" }}></i>
+                  <div><strong>Errar Completamente (0 pts):</strong> Você erra o vencedor ou prevê um empate quando houve um vencedor (Ex: palpita 1x1 ou 0x2 e o jogo termina 3x0).</div>
                 </li>
                 <li style={{ display: "flex", gap: "10px", alignItems: "flex-start" }}>
                   <i className="fa-solid fa-bolt text-gold" style={{ marginTop: "4px" }}></i>
-                  <div><strong>Modo Zica (+10 ou -5 pts):</strong> Use o Modo Zica em um palpite de um amigo. Se o seu amigo errar feio, você ganha 10 pontos extras. Mas se ele cravar o jogo, você perde 5 pontos!</div>
+                  <div><strong>Modo Zica (Anular Pontos):</strong> Use o Modo Zica contra um amigo. Se ele errar o placar exato, os pontos dele são anulados (0 pts) naquela rodada. Mas se ele cravar o jogo, você perde 1 pt!</div>
                 </li>
               </ul>
             </div>
@@ -1156,7 +1156,7 @@ export default function CravaCopaApp({ initialTodos }: CravaCopaAppProps) {
             </div>
 
             <p style={{ fontSize: "0.85rem", color: "var(--text-muted-light)", marginBottom: "20px", lineHeight: "1.5" }}>
-              Selecione um amigo de quem você deseja sabotar o palpite no próximo jogo (<span className="text-green">EUA x CANADÁ</span>). Se ele errar o placar exato, você ganha <strong>10 pts</strong> extras. Se ele cravar, você perde <strong>5 pts</strong>.
+              Selecione um amigo de quem você deseja sabotar o palpite no próximo jogo (<span className="text-green">EUA x CANADÁ</span>). Se ele errar o placar exato, os pontos dele são anulados (0 pts) nessa rodada. Se ele cravar, você perde <strong>1 pt</strong>.
             </p>
 
             <div className="zica-select-list">
